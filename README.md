@@ -45,7 +45,7 @@
  My community is [r/Minecraft](https://www.reddit.com/r/Minecraft/), focusing
 on public text discussions about game mechanics and proposed changes.
 TakeMeter will explore differences in how these posts explain opinions and
-suggest improvements. The final classification labels have not been chosen yet.
+suggest improvements. Its two starting labels are `proposal` and `argument`.
 
 ### Candidate Distinctions — Milestone 1
 
@@ -77,35 +77,85 @@ and
      The decision rule is worth a point on its own and it's the thing most
      people leave out. Every taxonomy has a hardest boundary. Name yours. -->
 
-### `label_one`
+The unit being labeled is one submission's title and body together, without
+its comments. Include text that makes sense without attachments and expresses
+an opinion or suggested change about Minecraft. Exclude standalone help
+requests, questions without a position, unsupported reactions, advertisements,
+and posts whose meaning depends on an image or video.
 
-**Definition:**
+### `proposal`
 
-**Example 1:**
->
+**Definition:** The author endorses a specific change to Minecraft's current
+mechanics or behavior, identifying what should change and how.
 
-**Example 2:**
->
+**Example 1:** [How would you fix the inventory problem?](https://www.reddit.com/r/Minecraft/comments/1ukeodx/how_would_you_fix_the_inventory_problem/)
+proposes a backpack that adds storage while occupying the chest equipment slot.
 
-### `label_two`
+**Example 2:** [Why does repairing take more materials than crafting AND experience?](https://www.reddit.com/r/Minecraft/comments/1vihgnf/why_does_repairing_take_more_materials_than/)
+proposes charging experience only for enchanted repairs and limiting material
+costs relative to crafting a replacement.
 
-**Definition:**
+### `argument`
 
-**Example 1:**
->
+**Definition:** The author supports a position about Minecraft with an explicit
+reason, example, or gameplay consequence, without endorsing a specific change
+to the game's current mechanics or behavior.
 
-**Example 2:**
->
+**Example 1:** [The elytra should not be nerfed](https://www.reddit.com/r/Minecraft/comments/1rigtgg/the_elytra_should_not_be_nerfed/)
+defends its current strength by explaining how slower travel would make long
+journeys tedious.
+
+**Example 2 — additional post to review:** [The elytra is end-game content, not mid-game](https://www.reddit.com/r/Minecraft/comments/1g53qtg/hot_take_the_elytra_is_endgame_content_not_midgame/)
+argues that its strength is justified by when a relaxed player obtains it,
+using the author's own progression as support.
 
 ### The hardest boundary
 
-**Which two labels:**
+**Which two labels:** `proposal` and `argument`.
 
-**The decision rule I used every time:**
-<!-- e.g. "If the post names a specific checkable fact, it's `analysis`, even
-     if the tone is heated." -->
+**Borderline post:** The repair-cost post above. It argues that repairing is
+too expensive and also specifies how the costs should change.
 
+**Case for `argument`:** It compares repairing with crafting a replacement
+to support a criticism of the existing mechanic.
 
+**Case for `proposal`:** It specifies a different rule for experience costs
+and a limit on material costs.
+
+**Decision rule to apply every time:** Read the title and body together.
+If the author endorses at least one specific change to current game behavior,
+use `proposal`, even when most of the post explains or argues for that change.
+Otherwise, use `argument` only if a position has an explicit supporting reason,
+example, or consequence. A change is specific when both its target and the
+intended behavior are identifiable; exact numbers or implementation details
+are not required. Defending an existing mechanic against a suggested change,
+or quoting another person's suggestion only to reject it, does not itself
+count as a proposal. A vague wish such as "make it better" is insufficient.
+Exclude a post if it meets neither definition.
+
+**Borderline decision under this rule:** `proposal` for the repair-cost post.
+
+### AI boundary stress test
+
+The following eight posts are AI-generated examples, not real Reddit posts
+or training data. The labels and explanations are an AI-assisted first pass;
+personal classification and group discussion or the independent AI discussion
+check are still pending.
+
+| # | Generated post | Draft label | Reason |
+|---|---|---|---|
+| 1 | "The inventory is cramped because each block variant needs another slot. Add a backpack that uses the chest slot." | `proposal` | A supported complaint also endorses a specific storage change. |
+| 2 | "The inventory feels cramped because a detailed roof needs stairs, slabs, and full blocks in several materials." | `argument` | Supplies a reason for the criticism without specifying a change. |
+| 3 | "People suggest removing rocket boosting, but I disagree: long trips would become tedious." | `argument` | Mentions a change only to reject it. |
+| 4 | "Elytra is fine. Make minecarts faster so railways are worth building." | `proposal` | Endorses a change to minecart speed; an exact speed is unnecessary. |
+| 5 | "Repairing is frustrating because a new tool can cost fewer materials. Mojang should make repairs better." | `argument` | Gives a reason, but the requested improvement has no specific behavior. |
+| 6 | "Could unenchanted repairs cost zero XP? That would make maintaining early tools worthwhile." | `proposal` | A question can endorse a specific change. |
+| 7 | "Mending is useful because it lets me keep building instead of repeatedly replacing my pickaxe." | `argument` | Describes an existing mechanic's benefit without asking to change it. |
+| 8 | "I'm not sure whether this would be balanced, but I would like a keep-inventory option that saves tools while dropping all XP." | `proposal` | Tentative language still expresses endorsement of a specific new option. |
+
+The draft rule distinguishes an author's own suggestion from a rejected quote,
+a specific change from a vague wish, and question wording from a genuine help
+request. These cases need personal review before treating the taxonomy as final.
 
 ---
 
