@@ -42,6 +42,11 @@
 <!-- Your community, and what your classifier sorts posts into. Three or four
      sentences. -->
 
+TakeMeter will classify public text posts from **r/Minecraft**. The project
+focuses on submissions whose title and body can be understood without viewing
+an image or video. [Milestone 1 research notes](milestone1.md) contain a
+35-post reading list and three candidate distinctions; personal reading and
+the final label taxonomy are still pending.
 
 
 ---
