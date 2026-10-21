@@ -9,6 +9,9 @@
 # Reading and counting your labelled data
 pandas>=2.0,<3.0
 
+# Run the local training notebook in VS Code or Jupyter.
+ipykernel>=6.29,<8.0
+
 # The zero-shot baseline (unit 6) and the fine-tune (unit 5). Both run on your
 # own machine — no API key, no account.
 transformers>=4.44,<5.0

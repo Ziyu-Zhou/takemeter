@@ -42,11 +42,29 @@
 <!-- Your community, and what your classifier sorts posts into. Three or four
      sentences. -->
 
-TakeMeter will classify public text posts from **r/Minecraft**. The project
-focuses on submissions whose title and body can be understood without viewing
-an image or video. [Milestone 1 research notes](milestone1.md) contain a
-35-post reading list and three candidate distinctions; personal reading and
-the final label taxonomy are still pending.
+ My community is [r/Minecraft](https://www.reddit.com/r/Minecraft/), focusing
+on public text discussions about game mechanics and proposed changes.
+TakeMeter will explore differences in how these posts explain opinions and
+suggest improvements. The final classification labels have not been chosen yet.
+
+### Candidate Distinctions — Milestone 1
+
+Starting examples:
+[The elytra should not be nerfed](https://www.reddit.com/r/Minecraft/comments/1rigtgg/the_elytra_should_not_be_nerfed/)
+and
+[How would you fix the inventory problem?](https://www.reddit.com/r/Minecraft/comments/1ukeodx/how_would_you_fix_the_inventory_problem/).
+
+1. **Explaining an opinion versus only stating a preference.** The elytra
+   post supports its position by explaining that slower travel would make
+   crossing long distances tedious.
+2. **Defending an existing mechanic versus proposing a specific change.**
+   The elytra post argues for keeping its current strength. The inventory
+   post proposes new storage options, including a backpack.
+3. **Naming a tradeoff versus focusing on benefits.** The inventory post
+   explains that its backpack would take the chest equipment slot, forcing
+   a choice between extra storage, armor, and elytra. The elytra post focuses
+   on the convenience of fast travel.
+
 
 
 ---
