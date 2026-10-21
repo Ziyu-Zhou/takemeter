@@ -42,10 +42,14 @@
 <!-- Your community, and what your classifier sorts posts into. Three or four
      sentences. -->
 
- My community is [r/Minecraft](https://www.reddit.com/r/Minecraft/), focusing
+My community is [r/Minecraft](https://www.reddit.com/r/Minecraft/), focusing
 on public text discussions about game mechanics and proposed changes.
-TakeMeter will explore differences in how these posts explain opinions and
-suggest improvements. Its two starting labels are `proposal` and `argument`.
+TakeMeter is intended to classify each submission's title and body as either
+`proposal`, an endorsed specific change, or `argument`, a supported position
+without an endorsed specific change. The goal is to distinguish suggestions
+from explanations even when both discuss the same mechanic. The current
+dataset is a small exploratory sample; a completed training run is not yet
+recorded in this repository.
 
 ### Candidate Distinctions — Milestone 1
 
@@ -166,43 +170,73 @@ request. These cases need personal review before treating the taxonomy as final.
 
 **Where the posts came from:**
 
+r/Minecraft public submissions about game mechanics, balance, progression,
+and suggested changes. **200 posts** are in `labels.csv`, meeting the collection
+target. Each row contains the title and complete rendered post body, without
+comments; media and Reddit interface markup were removed while keeping the
+author's text. The original 30 rows were preserved, and 170 more posts were
+appended; `data/post_sources.csv` maps data rows to their
+original URLs. Posts were found through topic searches, so this is a targeted
+sample rather than a random sample of the subreddit. Direct bulk retrieval
+was blocked; the collected text came from readable public pages, not search
+snippets. Text that depended on attachments, removed bodies, help-only posts,
+and duplicates was excluded during screening.
+
 **How I labelled them:** <!-- Cold first? Pre-labelled with AI and corrected?
 Say so plainly — the disclosure is required, not penalised. -->
 
-**Counts per label:**
+The exported file contained **9 unaided labels**, marked `cold`. AI
+normalized capitalization only, preserving those label choices, and pre-labeled
+the other **191 posts**. Their notes explicitly say
+`ai-prelabeled; pending human review`. The student has not yet confirmed those
+AI labels. Because of time limits, the student chose to proceed with
+fewer than the required 20 cold labels. Collection is now complete, but the
+20-cold-label requirement and personal review of the AI labels remain unmet;
+this is not a fully completed Milestone 4 submission.
+
+**Counts per label (including unreviewed AI labels):**
 
 | Label | Count | Share |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-| **Total** |  | 100% |
+| `proposal` | 90 | 45.0% |
+| `argument` | 110 | 55.0% |
+| **Total** | **200** | **100%** |
 
-**Three hard cases**
+**Data checks:** The file has the required `text`, `label`, and `note`
+columns, with no empty text or labels and no exact duplicate post texts.
+Neither label exceeds the assignment's 70% cap; both also meet my stricter
+40–60% balance target in `criteria.md`. The file remains one unsplit dataset;
+the notebook creates the train, validation, and test splits.
 
-<!-- Any post that made you pause: what it was, which two labels it could have
-     been, and what you chose. These are worth more than the easy 190. -->
+**Remaining labeling work:** Only 9 of the required 20 cold labels are
+recorded. The 191 AI-prelabeled posts still need to be read and corrected
+individually by me before their pending-review notes can be changed. AI
+assistance cannot substitute for either requirement. The original nine cold
+labels and the first 30 rows were preserved during expansion.
 
-**1.**
-> *The post:*
->
-> *Could have been:*
->
-> *I chose, because:*
+**Three hard cases — AI-assisted drafts, pending student review**
 
-**2.**
-> *The post:*
->
-> *Could have been:*
->
-> *I chose, because:*
+**1. [Repair costs](https://www.reddit.com/r/Minecraft/comments/1vihgnf/why_does_repairing_take_more_materials_than/)**
 
-**3.**
-> *The post:*
->
-> *Could have been:*
->
-> *I chose, because:*
+- *Could have been:* `argument` or `proposal`.
+- *AI draft decision:* `proposal`, because the post both criticizes repair
+  costs and endorses specific rules for experience and material costs.
+
+**2. [Mending is healthy for the game](https://www.reddit.com/r/Minecraft/comments/1x9uanb/mending_is_healthy_for_the_game_actually/)**
+
+- *Could have been:* `argument` or `proposal`.
+- *AI draft decision:* `argument`. Most of the post defends Mending with
+  gameplay consequences. Its final wish to make villager enchanting easier
+  does not specify how the mechanic should behave differently, so it does
+  not meet the specific-change rule.
+
+**3. [Community is wrong about latest updates](https://www.reddit.com/r/Minecraft/comments/1rbgfol/community_is_wrong_about_latest_updates/)**
+
+- *Could have been:* `argument` or `proposal`.
+- *AI draft decision:* `proposal`. Although most of the post argues for the
+  current update approach, the author also explicitly endorses implementing
+  the Illusioner. Under the decision rule, one specific endorsed change takes
+  priority over the surrounding argument.
 
 ---
 
@@ -210,17 +244,47 @@ Say so plainly — the disclosure is required, not penalised. -->
 
 <!-- Your starting model, your settings, and anything you changed and why. -->
 
-**Base model:**
+**Run status:** Setup has been run, but the saved notebook contains no
+completed split, training, or evaluation outputs. Neither `results.json` nor
+`test_split.csv` is present. The settings below describe the planned run,
+not a claim that training has finished.
 
-**Settings:** <!-- epochs, learning rate, batch size, seed -->
+**Base model:** `distilbert-base-uncased`, fine-tuned for two output labels:
+`proposal` and `argument`.
 
-**Anything I changed from the defaults, and why:**
+**Settings:**
 
-**Split sizes:** <!-- train / val / test, and per-label counts in the test
-split. If a label had fewer than about 8 in test, say so — it explains a lot
-of next unit's variance. -->
+| Setting | Planned value |
+|---|---|
+| Epochs | 3 |
+| Learning rate | `2e-5` |
+| Batch size | 16 |
+| Maximum input length | 128 tokens per post |
+| Seed | 42 |
+| Input file | `labels.csv` |
+| Split | Stratified 70% train / 15% validation / 15% test |
 
+**Changes from the defaults, and why:** No hyperparameter changes are
+planned. Section 2 must use `LABELS = ["proposal", "argument"]` to match my
+Minecraft taxonomy instead of the starter's `analysis`, `hot_take`, and
+`reaction`. At this documentation update, the saved notebook still contains
+the starter label list, so that edit remains necessary before training.
 
+**Device recorded by setup:** `mps` — Apple Silicon GPU (MPS), with
+PyTorch `2.14.1`. This comes from the saved section 1 output; the device must
+also be checked against `results.json` after training. Device information
+matters because the same seed and dataset can produce different results on
+different hardware.
+
+**Split sizes:** The earlier 30-row preview is obsolete after expanding the
+file to 200 posts. Section 3 must be rerun to report actual label counts for
+the new 70/15/15 split before training. No split files were created during
+collection. Whole posts remain in the CSV, but the tokenizer will truncate
+model inputs longer than 128 tokens.
+
+**Run artifacts:** Pending. After correcting the label map, run notebook
+sections 1–5 and retain `results.json` and `test_split.csv` in the repository.
+Sections 6–7 and interpretation of the evaluation numbers belong to Unit 6.
 
 ---
 
@@ -233,19 +297,58 @@ of next unit's variance. -->
      workflow and disclosing it costs you nothing. Not disclosing it is the
      problem. -->
 
-**Moment 1**
+**Moment 1 — understanding the notebook's label map**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* Why the notebook only used the default labels and
+  whether I was supposed to edit them.
+- *What came back:* AI inspected the notebook and CSV, explained that
+  `LABELS` is hardcoded, and identified the correct list as
+  `["proposal", "argument"]`.
+- *What I changed:* This README now records the required two-label
+  configuration. The saved notebook edit is still pending, so I am not
+  claiming that the corrected configuration has already been used to train.
 
-**Moment 2**
+**Moment 2 — collecting and pre-labeling the dataset**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* Gather r/Minecraft posts and finish the remaining
+  Milestone 4 work after proceeding with my unaided labels because of time.
+- *What came back:* AI collected complete public post text, screened out
+  unsuitable posts, applied the written definitions, and expanded the CSV
+  from 30 to 200 posts. It supplied source URLs, counts, and three draft hard
+  cases, and marked every AI label as pending human review.
+- *What I changed:* I supplied nine unaided labels. The original choices
+  remain intact; I have not yet confirmed or corrected the AI labels.
 
-**Pre-labelling disclosure:**
+**Pre-labelling disclosure:** AI pre-labeled 191 of 200 collected posts;
+those labels still await student review. The other 9 labels were supplied
+unaided by the student, with capitalization normalized afterward. This
+collection uses targeted topic searches rather than random subreddit sampling,
+so its label balance does not estimate the community's natural distribution.
+
+Earlier AI assistance is also documented in the taxonomy's generated boundary
+examples and the three draft hard-case explanations. Those generated examples
+are not training posts. The acceptance criteria were AI-assisted, as disclosed
+in `criteria.md`. This README update does not establish that the pending
+personal review or independent labeling has happened.
+
+### Unit 5 submission status
+
+- [x] Five numbered numerical criteria and rationales are in `criteria.md`.
+- [x] All five required README sections have content, including the hardest
+  boundary, three draft hard cases, and AI disclosure.
+- [x] `labels.csv` has `text`, `label`, and `note` columns; no label exceeds 70%.
+- [x] Reach 200 posts, or at least 150 with the stop-rule explanation.
+- [ ] Complete the required 20 unaided cold labels and review every
+  AI-prelabeled post.
+- [ ] Correct the notebook label map and complete sections 1–5.
+- [ ] Generate and commit `results.json` and `test_split.csv`.
+- [x] Commit the Milestone 4 dataset, source URLs, and README work.
+- [ ] Verify at least four new project commits before submission.
+- [ ] Push the completed work and submit my fork's URL.
+
+The sections below are the Unit 6 template and are not required by the pasted
+Unit 5 instructions. They remain pending until the corresponding evaluations
+and agreement checks have actually been performed.
 
 <!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
 
