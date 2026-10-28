@@ -10,12 +10,17 @@
     "Personal templates preserve all required rows and contain no AI answer labels",
     "New scripts compile; runner refuses to overwrite completed runs",
     "Agreement helper rejects absent or blank personal labels before opening a key",
-    "Agreement helper validated with synthetic 30-post fixture and one disagreement; real staff key remains absent"
+    "Agreement helper validated with synthetic 30-post fixture and one disagreement; real staff key remains absent",
+    "19 student labels extracted from Numbers, with all original texts and source hash verified",
+    "Partial staff agreement recomputed: 14 matches, 5 disagreements, 11 excluded",
+    "Partial-mode synthetic checks pass; full default rejects incomplete input, partial mode rejects changed text",
+    "All five adjudications disclose AI authorship and leave final student calls empty"
   ],
   "metric_tolerance": 1e-12,
   "not_verified": [
-    "Personal labeling/review",
-    "Staff agreement and adjudication",
+    "Remaining 11 staff labels",
+    "Final personal disagreement judgments",
+    "Personal Minecraft label review",
     "48-hour unaided repeat-label criterion",
     "Course submission"
   ]

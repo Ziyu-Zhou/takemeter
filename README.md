@@ -349,8 +349,10 @@ personal review or independent labeling has happened.
   drafted the tables, verdicts, and bounded diagnoses below.
 - *What I changed:* The repository now contains measured evaluation artifacts
   and an AI-assisted draft write-up. I have not yet personally confirmed the
-  interpretations or completed the blank personal labeling templates. AI did
-  not invent staff labels, adjudications, or a delayed personal agreement rate.
+  interpretations or completed the blank personal labeling templates. AI later extracted my 19 entered labels from Numbers and computed partial
+  staff agreement at my request. It drafted rule-based recommendations for
+  five disagreements, clearly marked as drafts rather than my final calls.
+  It did not invent student labels or a delayed personal agreement rate.
 
 ### Unit 5 submission status
 
@@ -367,9 +369,10 @@ personal review or independent labeling has happened.
 - [x] Verify at least four new project commits before submission.
 - [ ] Push the completed work and submit my fork's URL.
 
-The sections below record Unit 6 measurements. The personal staff labeling,
-staff answer key, adjudication, and delayed consistency check remain pending;
-see [PERSONAL_REVIEW.md](PERSONAL_REVIEW.md).
+The sections below record Unit 6 measurements and partial staff agreement
+from 19 student labels. Eleven staff labels, final personal adjudications, and
+the delayed consistency check remain incomplete; see
+[PERSONAL_REVIEW.md](PERSONAL_REVIEW.md).
 
 <!-- UNIT 6 — THE TEST -->
 
@@ -514,14 +517,20 @@ unaided second labeling with a documented 48-hour gap has been completed.
 That is a missing measurement, not evidence of a model limitation. The prepared
 blind sample in `relabel_review.csv` is not a completed experiment.
 
-**Agreement evidence and the limit on these diagnoses:** The staff agreement
-report cannot yet be computed: my own 30 staff-taxonomy labels and the TF's
-answer key are absent. I cannot use nonexistent disagreements to diagnose
-inconsistent labeling, and model confusion alone does not prove a labeling
-problem. The labeling-versus-model diagnosis must be revisited after that
-report, with particular attention to pile (a) rule-application errors. Staff
-agreement under a different taxonomy is indirect evidence about my labeling
-habits, not a replacement for criterion 5 under the Minecraft taxonomy.
+**Agreement evidence and the limit on these diagnoses:** On the 19 posts I
+completed, 14 match staff and 5 disagree. Three staff-analysis posts were
+labeled hot_take, one staff-analysis post was labeled reaction, and one
+staff-hot_take post was labeled reaction. This points to difficulty recognizing
+when a checkable comparison is carrying an argument and separating a general
+claim from a personal response. The AI draft recommends pile (a) for each,
+with individual reasons below; I have not yet adopted those calls. This is
+direct evidence of rule-application differences on the completed staff subset,
+and a reason to audit boundary decisions in my Minecraft data. It does not
+prove which of the 191 pending AI labels is wrong, or that labeling caused the
+trained model's collapse. The subset was chosen by completion rather than
+random sampling, so 73.7% must not be treated as a full-set consistency estimate.
+Staff agreement is also not a replacement for criterion 5 under a different
+taxonomy and a delayed, unaided procedure.
 
 **AI adversarial verdict check, for my review:** The strongest case for marking
 criterion 3 MET is that two improved seeds pass and the third rounds to 0.70.
@@ -533,23 +542,76 @@ independent breakout or Claude discussion.
 
 ## Agreement Report
 
-**Agreement rate: pending, not measured.** No `agreement_results.json` has
-been fabricated. `data/staff_labels.csv` was absent and no answer key was
-opened. The student must label the 30 posts under `data/staff_taxonomy.md`
-first, using the supplied blank `staff_labeling_template.csv`, and save it as
-`my_staff_labels.csv`. Only then obtain the key from the TF and run:
+**Partial agreement: 14 / 19 = 73.7%.** The student completed **19 of 30**
+posts in `staff_labeling_template.numbers` and explicitly requested proceeding
+with that subset. The 19 labels were exported unchanged to
+`my_staff_labels.csv` and saved before inspecting the key. The other **11**
+posts were excluded, not counted as wrong and not filled by AI. All 19 texts
+match the original posts exactly. Source hash and completed/remaining IDs are
+recorded in `evaluation/staff_labeling_progress.json`.
+
+The comparison uses the supplied TF key in `data/staff_labels.csv` and the
+provided agreement script, with an explicit partial-report mode:
 
 ```bash
-.venv/bin/python finish_agreement.py
+.venv/bin/python finish_agreement.py --allow-partial
 ```
 
-The helper checks all 30 unchanged texts and valid labels before opening the
-key, then runs the provided `agreement.py`. It creates
-`agreement_adjudication.md` with each full disagreement, both labels, and blank
-spaces for a personal call, reason, and pile (a), (b), or (c). Copy the completed
-report here and commit `agreement_results.json` and the adjudications. For the
-discussion exercise, pick a defensible disagreement and hear both cases before
-making the final call. This milestone remains incomplete until then.
+`agreement_results.json` records the denominator, five disagreements, partial
+status, and eleven remaining posts. The default helper still requires all 30.
+Only the completed posts' staff labels are presented in the write-up. This is
+partial evidence and does not fulfill the assignment's full 30-post exercise.
+
+### Disagreements — AI-assisted drafts for personal review
+
+Each full post, both labels, the strongest case for the student's original
+label, and an AI recommendation are in
+[agreement_adjudication.md](agreement_adjudication.md). The student's final
+calls and pile choices remain pending. All five tentative recommendations favor
+the staff label because of the specific rules below; no ambiguous case was
+invented to force a mix of outcomes.
+
+**1. Post:** The club championship scoring changed in 2019 from top-6 to top-10. Since then our B team has finished above the A team twice. That's not depth improving, it's the scoring rewarding turnout.
+
+**Staff / mine:** `analysis` / `hot_take`.
+
+**AI draft call:** `analysis`. The change from top-6 to top-10 in 2019 and the B team beating the A team twice are the evidence for a scoring-system explanation. They carry the argument rather than decorating it (rule 1). Suggested pile **(a)**; personal final call and reason pending.
+
+**2. Post:** Everyone blames the hill at 18 miles. I split the field into people who ran the first half under 1:45 and over, and the slowdown after 18 was almost identical for both groups. If the hill were the problem the fast starters would fall apart harder.
+
+**Staff / mine:** `analysis` / `hot_take`.
+
+**AI draft call:** `analysis`. The under/over-1:45 grouping and similar slowdown after mile 18 form a checkable comparison used to challenge the hill explanation. The inference can be debated, but the comparison does argumentative work (rule 1). Suggested pile **(a)**; personal final call and reason pending.
+
+**3. Post:** Ran the same loop in 4C and in 24C within a fortnight, same effort by heart rate. 90 seconds slower in the heat over six miles. People keep saying heat costs you 'a bit' and it's more than that.
+
+**Staff / mine:** `analysis` / `hot_take`.
+
+**AI draft call:** `analysis`. The same loop, matched heart-rate effort, 4C versus 24C, and 90-second difference support the claim that heat costs more than a little. The numbers are central evidence, so analysis fits rule 1. Suggested pile **(a)**; personal final call and reason pending.
+
+**4. Post:** Three of us ran the same session on the same day, different shoes, within 10 seconds of each other over 5 miles. I'm not saying shoes do nothing, but whatever they do was smaller than the noise between three people.
+
+**Staff / mine:** `analysis` / `reaction`.
+
+**AI draft call:** `analysis`. Different shoes, the same session/day, and a spread of 10 seconds over 5 miles directly support the argument that the observed shoe effect was smaller than variation between runners. First-person experience does not override load-bearing evidence (rule 3). Suggested pile **(a)**; personal final call and reason pending.
+
+**5. Post:** The club needs to stop pretending the Tuesday session is for everyone. It isn't and it never has been.
+
+**Staff / mine:** `hot_take` / `reaction`.
+
+**AI draft call:** `hot_take`. The claim that the Tuesday session is not for everyone is a general assertion about the club, with no supporting fact and no account of an immediate personal event. Rule 2 therefore favors hot_take. Suggested pile **(a)**; personal final call and reason pending.
+
+**Pattern:** Four disagreements concern posts that offer checkable comparisons
+as support, despite first-person wording or a confident conclusion. The fifth
+concerns a general unsupported assertion that was labeled as a personal
+reaction. These are useful boundary-review targets, but the incomplete staff
+set and the different taxonomy limit what they establish about my own dataset.
+
+For the discussion exercise, disagreement 4 is a concrete starting point: the
+case for reaction is its personal-experience framing, while the case for
+analysis is its quantified comparison and explicit inference about shoes.
+Both cases are developed in the linked draft; the final personal judgment has
+not been made.
 
 ---
 
@@ -629,8 +691,8 @@ fairly with seed 7's 0.667 on different posts.
   comparison; the current model remains close to a majority guesser.
 - **Criterion 2 — proposal F1:** review the specific-change boundary and locate
   decisive proposal clauses in training posts. Truncation is still possible
-  after the change. Personal label review and the staff agreement evidence
-  are needed before calling this a label inconsistency or choosing another fix.
+  after the change. Personal label review and a completed adjudication of the partial staff
+  agreement evidence are needed before attributing this to label inconsistency.
 - **Criterion 3 — argument F1:** reduce proposals incorrectly called argument
   rather than trying to raise argument recall, which is already 1.0. I stopped
   because this experiment did not fix that bias across every seed, and further
@@ -638,7 +700,7 @@ fairly with seed 7's 0.667 on different posts.
 - **Criterion 5 — consistency:** complete personal initial review, document
   timing, and carry out the blind repeat-label check at least 48 hours later.
   Automation cannot supply unaided student labels or an elapsed personal
-  labeling procedure. Staff agreement and adjudication are separately pending.
+  labeling procedure. Staff agreement now covers 19/30 posts; personal adjudication remains pending.
 
 **The gap between what I meant my labels to capture and what the model learned:**
 I intended the labels to distinguish an endorsed specific Minecraft change
@@ -654,7 +716,8 @@ correctly.
 - [x] Three before and three after seeds, device, five-row run logs, and typed matrices.
 - [x] Strict verdicts, evidence-limited diagnoses, one intervention, and remaining issues.
 - [x] Results, prediction files, logs, and provenance retained in this repository.
-- [ ] Student's 30 staff labels, TF key, agreement rate, and every personal adjudication.
+- [x] Supplied TF key and partial agreement computed from 19 unchanged student labels.
+- [ ] Remaining 11 staff labels and final personal calls on the five current disagreements.
 - [ ] Personal label review and criterion 5's documented delayed consistency check.
 - [ ] Student review of AI-assisted interpretation and completion of the discussion exercises.
 - [ ] Push completed work and submit the same URL: https://github.com/Ziyu-Zhou/takemeter.
