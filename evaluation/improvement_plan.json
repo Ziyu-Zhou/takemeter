@@ -1,0 +1,16 @@
+{
+  "change": "MAX_LENGTH: 128 -> 256",
+  "reason": "All three original runs predict argument only; 86\u201390 of 139 training posts exceed 128 tokens. Test whether more input helps the endorsed-change boundary. This is a hypothesis, not a proven cause.",
+  "fixed": [
+    "labels.csv unchanged",
+    "seeds 42, 7, 2024",
+    "same train/validation/test membership per seed",
+    "3 epochs",
+    "learning rate 2e-5",
+    "batch size 16",
+    "distilbert-base-uncased",
+    "CPU for all before/after training"
+  ],
+  "decision_timing": "Recorded before the after run. Baseline model download still in progress.",
+  "limitations": "Staff agreement and personal label consistency remain unmeasured; no claim that input truncation is the only cause."
+}

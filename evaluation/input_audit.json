@@ -1,0 +1,30 @@
+{
+  "tokenizer": "distilbert-base-uncased",
+  "truncation_stats": [
+    {
+      "seed": 42,
+      "n_train": 139,
+      "n_val": 31,
+      "n_test": 30,
+      "train_over_128": 89,
+      "train_over_256": 48
+    },
+    {
+      "seed": 7,
+      "n_train": 139,
+      "n_val": 31,
+      "n_test": 30,
+      "train_over_128": 90,
+      "train_over_256": 55
+    },
+    {
+      "seed": 2024,
+      "n_train": 139,
+      "n_val": 31,
+      "n_test": 30,
+      "train_over_128": 86,
+      "train_over_256": 48
+    }
+  ],
+  "note": "Training partitions only; no changes to labels or splits."
+}

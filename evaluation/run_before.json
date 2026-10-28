@@ -1,0 +1,31 @@
+{
+  "LABELS": [
+    "proposal",
+    "argument"
+  ],
+  "BASE_MODEL": "distilbert-base-uncased",
+  "EPOCHS": 3,
+  "LEARNING_RATE": 2e-05,
+  "BATCH_SIZE": 16,
+  "MAX_LENGTH": 128,
+  "DEVICE": "cpu",
+  "DEVICE_NAME": "CPU",
+  "run_label": "before",
+  "started_at_utc": "2026-10-28T03:51:05.672153+00:00",
+  "labels_sha256": "eb4a074cdb5bba7cade304e1dbc9653b57df23471259ed4796dbfc7b28746002",
+  "notebook_sha256": "a3800dbb35472688609b989e660854efd0dd571a3074855a37defa26790fa472",
+  "torch_version": "2.14.1",
+  "execution": "Notebook code cells executed directly by run_experiment.py",
+  "completed_at_utc": "2026-10-28T03:52:10.697349+00:00",
+  "executed_cells": [
+    2,
+    4,
+    6,
+    8,
+    10,
+    12,
+    19,
+    21,
+    23
+  ]
+}
