@@ -48,8 +48,8 @@ TakeMeter is intended to classify each submission's title and body as either
 `proposal`, an endorsed specific change, or `argument`, a supported position
 without an endorsed specific change. The goal is to distinguish suggestions
 from explanations even when both discuss the same mechanic. The current
-dataset is a small exploratory sample; a completed training run is not yet
-recorded in this repository.
+dataset is a small exploratory sample; training and evaluation are recorded
+below, while personal label review remains incomplete.
 
 ### Candidate Distinctions — Milestone 1
 
@@ -244,47 +244,54 @@ labels and the first 30 rows were preserved during expansion.
 
 <!-- Your starting model, your settings, and anything you changed and why. -->
 
-**Run status:** Setup has been run, but the saved notebook contains no
-completed split, training, or evaluation outputs. Neither `results.json` nor
-`test_split.csv` is present. The settings below describe the planned run,
-not a claim that training has finished.
+**Run status:** The existing Unit 5 run produced `results.json` and
+`test_split.csv`. The notebook uses `LABELS = ["proposal", "argument"]`.
+Unit 6 repeated the original setup on three seeds and tested one input-length
+change on the same splits. `labels.csv` was unchanged throughout evaluation.
 
-**Base model:** `distilbert-base-uncased`, fine-tuned for two output labels:
-`proposal` and `argument`.
+| Setting | Before | After |
+|---|---|---|
+| Base model | `distilbert-base-uncased` | same |
+| Epochs | 3 | same |
+| Learning rate | `2e-5` | same |
+| Batch size | 16 | same |
+| Maximum input length | 128 tokens | 256 tokens |
+| Seeds | 42, 7, 2024 | same |
+| Rows | 200 | same |
 
-**Settings:**
+**Device:** The preserved Unit 5 `results.json` records Apple Silicon GPU
+(`mps`), PyTorch `2.14.1`. All six new before/after training runs used **CPU**,
+PyTorch `2.14.1`, because MPS was unavailable in the execution sandbox. The
+before/after comparison therefore uses the same device. Original MPS and
+repeated CPU seed-42 accuracy, F1, and confusion counts agree; confidence
+values differ slightly. No cross-device numerical reproducibility is assumed.
 
-| Setting | Planned value |
-|---|---|
-| Epochs | 3 |
-| Learning rate | `2e-5` |
-| Batch size | 16 |
-| Maximum input length | 128 tokens per post |
-| Seed | 42 |
-| Input file | `labels.csv` |
-| Split | Stratified 70% train / 15% validation / 15% test |
+**Actual split sizes:** 139 train / 31 validation / 30 test, stratified.
+The notebook intends 70/15/15, but scikit-learn rounds the fractional validation
+size up to 31 in this implementation. Each test split has 14 `proposal` and
+16 `argument` posts. The saved Unit 5 test file exactly matches the notebook's
+seed-42 selection, in order and labels.
 
-**Changes from the defaults, and why:** No hyperparameter changes are
-planned. Section 2 must use `LABELS = ["proposal", "argument"]` to match my
-Minecraft taxonomy instead of the starter's `analysis`, `hot_take`, and
-`reaction`. At this documentation update, the saved notebook still contains
-the starter label list, so that edit remains necessary before training.
+**Execution and evidence:** `run_experiment.py` executes section 1 setup,
+sections 2–3, section 6's entire three-seed cell, and section 7. It imports the
+training/evaluation function definitions directly from notebook sections 4–5
+without overwriting the original Unit 5 artifacts. Logs, settings, file hashes,
+per-post predictions, and per-seed test files are in `evaluation/`. It retains
+each completed seed in a separate partial file if interrupted. Completed
+three-seed results are `results_three_seeds_before.json` and
+`results_three_seeds_after.json`.
 
-**Device recorded by setup:** `mps` — Apple Silicon GPU (MPS), with
-PyTorch `2.14.1`. This comes from the saved section 1 output; the device must
-also be checked against `results.json` after training. Device information
-matters because the same seed and dataset can produce different results on
-different hardware.
+Reproduce in a fresh checkout without existing three-seed result files:
 
-**Split sizes:** The earlier 30-row preview is obsolete after expanding the
-file to 200 posts. Section 3 must be rerun to report actual label counts for
-the new 70/15/15 split before training. No split files were created during
-collection. Whole posts remain in the CSV, but the tokenizer will truncate
-model inputs longer than 128 tokens.
+```bash
+.venv/bin/python run_experiment.py --label before
+.venv/bin/python run_experiment.py --label after --max-length 256
+```
 
-**Run artifacts:** Pending. After correcting the label map, run notebook
-sections 1–5 and retain `results.json` and `test_split.csv` in the repository.
-Sections 6–7 and interpretation of the evaluation numbers belong to Unit 6.
+The runner refuses to overwrite completed three-seed files. It requires the
+Unit 5 base model to be cached. The notebook itself retains its original
+128-token settings and `RUN_LABEL = "before"`; the runner explicitly sets
+`RUN_LABEL = "after"` and the one input-length override for the improvement.
 
 ---
 
@@ -304,9 +311,8 @@ Sections 6–7 and interpretation of the evaluation numbers belong to Unit 6.
 - *What came back:* AI inspected the notebook and CSV, explained that
   `LABELS` is hardcoded, and identified the correct list as
   `["proposal", "argument"]`.
-- *What I changed:* This README now records the required two-label
-  configuration. The saved notebook edit is still pending, so I am not
-  claiming that the corrected configuration has already been used to train.
+- *What I changed:* The saved notebook now uses the two-label configuration,
+  and the recorded training results use that map.
 
 **Moment 2 — collecting and pre-labeling the dataset**
 
@@ -328,8 +334,23 @@ so its label balance does not estimate the community's natural distribution.
 Earlier AI assistance is also documented in the taxonomy's generated boundary
 examples and the three draft hard-case explanations. Those generated examples
 are not training posts. The acceptance criteria were AI-assisted, as disclosed
-in `criteria.md`. This README update does not establish that the pending
+in `criteria.md`. The recorded evaluation does not establish that the pending
 personal review or independent labeling has happened.
+
+**Moment 3 — Unit 6 evaluation and interpretation**
+
+- *What I asked for:* Follow the evaluation milestones and identify the work
+  requiring my decisions later.
+- *What came back:* AI inspected the actual notebook and saved split, recorded
+  an AI-assisted prediction before reading scores, ran both zero-shot prompts,
+  and ran the notebook's training functions across three before and three
+  after seeds. It audited training-input lengths, selected the single
+  128-to-256-token intervention, verified metrics from saved predictions, and
+  drafted the tables, verdicts, and bounded diagnoses below.
+- *What I changed:* The repository now contains measured evaluation artifacts
+  and an AI-assisted draft write-up. I have not yet personally confirmed the
+  interpretations or completed the blank personal labeling templates. AI did
+  not invent staff labels, adjudications, or a delayed personal agreement rate.
 
 ### Unit 5 submission status
 
@@ -340,235 +361,305 @@ personal review or independent labeling has happened.
 - [x] Reach 200 posts, or at least 150 with the stop-rule explanation.
 - [ ] Complete the required 20 unaided cold labels and review every
   AI-prelabeled post.
-- [ ] Correct the notebook label map and complete sections 1–5.
-- [ ] Generate and commit `results.json` and `test_split.csv`.
+- [x] Correct the notebook label map and complete sections 1–5.
+- [x] Generate and commit `results.json` and `test_split.csv`.
 - [x] Commit the Milestone 4 dataset, source URLs, and README work.
-- [ ] Verify at least four new project commits before submission.
+- [x] Verify at least four new project commits before submission.
 - [ ] Push the completed work and submit my fork's URL.
 
-The sections below are the Unit 6 template and are not required by the pasted
-Unit 5 instructions. They remain pending until the corresponding evaluations
-and agreement checks have actually been performed.
+The sections below record Unit 6 measurements. The personal staff labeling,
+staff answer key, adjudication, and delayed consistency check remain pending;
+see [PERSONAL_REVIEW.md](PERSONAL_REVIEW.md).
 
-<!-- ═══════════════════════ UNIT 6 — THE TEST ═══════════════════════
-
-     Don't fill these in during unit 5.
-     ═══════════════════════════════════════════════════════════════════ -->
+<!-- UNIT 6 — THE TEST -->
 
 ---
 
 ## Baseline vs. Trained
 
-<!-- Both models on the same posts. `python baseline.py --trained results.json`
-     prints this table for you. -->
-
-| Measure | Baseline | Trained | Difference |
-|---|---|---|---|
-| Overall accuracy |  |  |  |
-| Macro F1 |  |  |  |
-| F1 — `label_one` |  |  |  |
-| F1 — `label_two` |  |  |  |
-
 **What I predicted before I looked:**
 
 AI-assisted prediction, recorded before inspecting the existing scores or running either baseline: the fine-tuned model will outperform the zero-shot baseline on `proposal` F1 because Minecraft-specific wording can distinguish an endorsed change from a defended or rejected suggestion. This prediction still needs my personal confirmation.
-<!-- Milestone 1 asks you to write this BEFORE seeing the trained numbers. A
-     prediction made afterwards isn't one. -->
 
-**What the gap actually means:**
-<!-- If the baseline matched your trained model, your fine-tuning added
-     nothing — and that is a real finding, not a failure. Say it plainly. -->
+This was committed in `ace568b` before the AI read `results.json` or ran a
+baseline. It is an AI-assisted prediction, not a claim that I independently
+made it before seeing results. The interpretations below are AI-assisted drafts
+for my review.
 
+Both models were scored on **all 30 posts in `test_split.csv`**, the original
+seed-42 held-out set. There was no random-sample fallback and no sample cap.
+The baseline is `facebook/bart-large-mnli` using the two definition sentences
+copied from this README into `label_definitions.txt`. The file's comments are
+ignored; examples and the longer boundary discussion are not part of its prompt.
+The baseline and preserved Unit 5 trained run both used MPS.
 
+| Measure | Baseline | Trained | Difference |
+|---|---|---|---|
+| Overall accuracy | 0.633 | 0.533 | -0.100 |
+| Macro F1 | 0.576 | 0.348 | -0.229 |
+| F1 — `argument` | 0.732 | 0.696 | -0.036 |
+| F1 — `proposal` | 0.421 | 0.000 | -0.421 |
+
+Difference means trained minus baseline. The prediction was wrong: fine-tuning
+lost 0.421 proposal F1 and 10 percentage points of accuracy on these posts.
+This experiment supplies no evidence of added accuracy from fine-tuning.
+The baseline is a larger model with a longer input window; this comparison
+measures these two systems, not the isolated causal effect of fine-tuning.
+
+### What the definitions were worth
+
+| Prompt | Accuracy | Macro F1 | Proposal F1 | Argument F1 |
+|---|---|---|---|---|
+| Definitions — main baseline | 0.633 | 0.576 | 0.421 | 0.732 |
+| Bare names — ablation | 0.667 | 0.665 | 0.643 | 0.688 |
+
+Definitions minus bare names is **−0.033 accuracy**: 19 rather than 20 correct
+posts. The definitions did not improve this run. One post on a 30-post test
+set does not establish that definitions are generally harmful. I keep the
+specified definitions baseline as the main result rather than selecting the
+better prompt after seeing its score. Both runs used the same model, MPS
+device, and held-out posts. Predictions are saved in `baseline_results.json`
+and `baseline_bare_names_results.json`.
+
+```bash
+HF_HOME=.cache/huggingface .venv/bin/python baseline.py --trained results.json
+HF_HOME=.cache/huggingface .venv/bin/python baseline.py \
+  --definitions evaluation/intentionally_missing_definitions.txt \
+  --out baseline_bare_names_results.json --trained results.json
+```
+
+The missing definitions path is deliberate; the real definitions file was
+retained. Default pipeline tokenization and hypothesis construction were used
+for both baseline runs. Model revision, prompt, device, and input hashes are
+recorded in `evaluation/baseline_provenance.json`.
 
 ---
 
 ## Run Log — Before
 
-<!-- Five criteria across three seeds. The notebook's section 6 prints the
-     spread table; the Target and Verdict columns are yours. -->
+Seeds **42, 7, 2024**, CPU, PyTorch `2.14.1`; 128 input tokens. Criteria and
+thresholds are unchanged from `criteria.md`. Criteria 1–3 must pass on every
+seed using unrounded values. Criteria 4–5 are measured once; their repeated
+cells show that they do not vary with seed.
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥ 0.75 | 0.533 | 0.533 | 0.533 | MISSED |
+| 2. Proposal F1 | ≥ 0.70 | 0.000 | 0.000 | 0.000 | MISSED |
+| 3. Argument F1 | ≥ 0.70 | 0.696 | 0.696 | 0.696 | MISSED |
+| 4. Dataset balance | Each label 40–60% | 45% / 55% | 45% / 55% | 45% / 55% | MET |
+| 5. Unaided repeat-label agreement | ≥ 27/30 after ≥ 48 hours | Not tested | Not tested | Not tested | MISSED (unverified) |
 
-### Confusion matrix
+All three runs have macro F1 **0.348**. Accuracy spread is **0.000**.
+This apparent stability comes from predicting `argument` for every post,
+not from consistently distinguishing the labels. Every split has 16 argument
+posts out of 30, so the all-argument majority guesser also scores 0.533.
+There are only 14 proposal test examples per seed; one recovered proposal
+moves accuracy by 3.3 percentage points. Seeds change both split membership
+and initialization; their held-out sets can overlap and are not independent
+samples of a new population.
 
-<!-- ⚠️ TYPED AS A MARKDOWN TABLE. The notebook prints one ready to paste.
-     An image of a matrix earns nothing. -->
+### Confusion matrix — Before, seed 42
 
-| true \ predicted |  |  |  |
-|---|---|---|---|
-| **** |  |  |  |
-| **** |  |  |  |
-| **** |  |  |  |
+| true \ predicted | proposal | argument |
+|---|---|---|
+| **proposal** | 0 | 14 |
+| **argument** | 0 | 16 |
 
-**My biggest off-diagonal number, and what it means:**
-<!-- Not "the model made mistakes" — WHICH boundary it didn't learn, and which
-     direction. "7 real analysis posts were called hot_take and only 3 went the
-     other way" is a direction, not just an error rate. -->
-
-
+**Biggest confusion:** 14 reference `proposal` posts were called `argument`,
+while zero `argument` posts were called `proposal`. Seeds 7 and 2024 have the
+same counts on their own held-out posts. These reference labels include
+unreviewed AI labels; they are not independently verified human ground truth.
 
 ---
 
 ## Verdicts and Diagnoses
 
-<!-- MET or MISSED against LAST UNIT's target. The target has to hold across
-     all three seeds, not turn up sometimes. -->
-
-| # | Criterion | Target | Verdict | How I decided |
+| # | Criterion | Verdict before | Verdict after | How I decided |
 |---|---|---|---|---|
-| 1 |  |  |  |  |
-| 2 |  |  |  |  |
-| 3 |  |  |  |  |
-| 4 |  |  |  |  |
-| 5 |  |  |  |  |
+| 1 | Accuracy ≥ 0.75 on every seed | MISSED | MISSED | Before: 0.533 throughout; after: best seed 0.667, below 0.75. |
+| 2 | Proposal F1 ≥ 0.70 on every seed | MISSED | MISSED | Before: 0 throughout; after: 0, 0.444, 0.133. |
+| 3 | Argument F1 ≥ 0.70 on every seed | MISSED | MISSED | Seed 42 remains 0.695652, below 0.70; two passing after-seeds do not rescue it. |
+| 4 | Each label 40–60% of deduplicated data | MET | MET | 90 proposal / 110 argument = 45% / 55%; dataset unchanged. |
+| 5 | ≥ 90% unaided repeat agreement after ≥ 48 hours | MISSED (unverified) | MISSED (unverified) | The required personal repeat-label record does not exist. No rate was inferred from another test. |
 
-**Diagnoses**
+MISSED (unverified) means the required evidence is absent; it does not mean a
+measured personal agreement rate was below 90%. No original target was revised.
 
-<!-- For each miss: the cause, and how you know. The four common causes are:
-     too few examples for a label, a boundary you applied inconsistently, a
-     genuinely hard label pair, and a task the model can't reach from this
-     much data.
+**1. Accuracy miss — failure to distinguish proposals.** All 42 proposal
+reference instances across the three before runs are missed; no argument
+reference instances are missed. This explains the low accuracy directly.
+It does not establish why the model collapsed. The training partitions have
+62–63 proposals and 76–77 arguments, so a severely missing training class is
+not the immediate explanation. Small data and short training remain plausible.
 
-     ⚠️ Use your agreement report as evidence. It is the only instrument you
-     have that can tell a LABELLING problem from a MODEL problem, and this
-     section is graded on whether you used it that way. -->
+**2. Proposal F1 miss — lost context is a testable contributor.** In the
+three training partitions, **89, 90, and 86 of 139 posts** exceed 128 tokens.
+The label rule gives priority to any endorsed specific change anywhere in the
+post, which may occur beyond the visible prefix. This motivated the one
+input-length intervention. There has been no span-level audit proving where
+each decisive suggestion occurs, so this is a supported hypothesis rather
+than a demonstrated explanation of every error. Even at 256 tokens, 48, 55,
+and 48 training posts remain truncated.
 
+**3. Argument F1 miss — biased predictions create false positives.** Argument
+recall is 1.0 before, but precision is only 16/30 = 0.533 because every proposal
+is also assigned argument. Its F1 is therefore 0.695652, just below 0.70.
+Rounding it to 0.70 would conceal a miss. The improvement reduces this problem
+on two seeds, but leaves seed 42 unchanged.
 
+**5. Consistency criterion miss — missing personal procedure.** The data notes
+record only 9 cold labels and 191 AI-prelabeled labels pending review. No
+unaided second labeling with a documented 48-hour gap has been completed.
+That is a missing measurement, not evidence of a model limitation. The prepared
+blind sample in `relabel_review.csv` is not a completed experiment.
+
+**Agreement evidence and the limit on these diagnoses:** The staff agreement
+report cannot yet be computed: my own 30 staff-taxonomy labels and the TF's
+answer key are absent. I cannot use nonexistent disagreements to diagnose
+inconsistent labeling, and model confusion alone does not prove a labeling
+problem. The labeling-versus-model diagnosis must be revisited after that
+report, with particular attention to pile (a) rule-application errors. Staff
+agreement under a different taxonomy is indirect evidence about my labeling
+habits, not a replacement for criterion 5 under the Minecraft taxonomy.
+
+**AI adversarial verdict check, for my review:** The strongest case for marking
+criterion 3 MET is that two improved seeds pass and the third rounds to 0.70.
+I reject that reading: the written target applies to every seed and its raw
+seed-42 F1 is below 0.70. This was an AI-assisted check, not a claim of an
+independent breakout or Claude discussion.
 
 ---
 
 ## Agreement Report
 
-<!-- Your rate against the staff set, and every disagreement adjudicated.
+**Agreement rate: pending, not measured.** No `agreement_results.json` has
+been fabricated. `data/staff_labels.csv` was absent and no answer key was
+opened. The student must label the 30 posts under `data/staff_taxonomy.md`
+first, using the supplied blank `staff_labeling_template.csv`, and save it as
+`my_staff_labels.csv`. Only then obtain the key from the TF and run:
 
-     Remember you labelled these 30 under the STAFF taxonomy in
-     data/staff_taxonomy.md, not your own — so every argument below is made
-     from those definitions and those decision rules. -->
+```bash
+.venv/bin/python finish_agreement.py
+```
 
-**Agreement rate:** ___ / 30 = ___%
-
-<!-- Nobody grades this number. A 60% who argues every disagreement from the
-     stated rules beats a 95% who wrote "staff was right" nine times. Several
-     of the 30 were chosen because they're genuinely ambiguous — you should be
-     winning some of these. -->
-
-**Disagreements**
-
-<!-- Three lines each: the post, both labels, and who you think is right and
-     why — grounded in the staff definitions you were both applying.
-
-     Then sort each into one of three piles:
-       (a) the rule covered it and I applied it loosely → a consistency problem
-       (b) the rule genuinely doesn't say               → a gap in the definitions
-       (c) the rule is ambiguous here and my reading is defensible → argue it.
-           This is a legitimate win.
-
-     Pile (a) is the one that matters most for your diagnosis: if you applied a
-     written rule two different ways on 30 posts, that is direct evidence about
-     what you did across your own 200. -->
-
-**1.**
-> *The post:*
->
-> *Staff said / I said:*
->
-> *My call, and why:*
->
-> *Which pile:*
-
-**2.**
-> *The post:*
->
-> *Staff said / I said:*
->
-> *My call, and why:*
->
-> *Which pile:*
-
-**What the pattern in my disagreements tells me:**
-
-
+The helper checks all 30 unchanged texts and valid labels before opening the
+key, then runs the provided `agreement.py`. It creates
+`agreement_adjudication.md` with each full disagreement, both labels, and blank
+spaces for a personal call, reason, and pile (a), (b), or (c). Copy the completed
+report here and commit `agreement_results.json` and the adjudications. For the
+discussion exercise, pick a defensible disagreement and hear both cases before
+making the final call. This milestone remains incomplete until then.
 
 ---
 
 ## The Improvement
 
-**What I changed:**
+**One change:** increase `MAX_LENGTH` from **128 to 256 tokens**. No label rows
+were changed. Epochs, learning rate, batch size, base model, device, seed list,
+and train/validation/test membership per seed stayed fixed. The plan was
+recorded in `evaluation/improvement_plan.json` before running the improvement.
+The runner explicitly sets `RUN_LABEL = "after"`, preserving the before file.
 
-**Which diagnosis pointed at it:**
+**Diagnosis:** the original model read truncated prefixes of most training
+posts despite a taxonomy requiring it to notice an endorsed change anywhere.
+The intervention tests that input constraint; it does not test label cleanup
+or longer training.
 
 ### Run Log — After
 
 | Criterion | Target | Seed 42 | Seed 7 | Seed 2024 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. Overall accuracy | ≥ 0.75 | 0.533 | 0.667 | 0.567 | MISSED |
+| 2. Proposal F1 | ≥ 0.70 | 0.000 | 0.444 | 0.133 | MISSED |
+| 3. Argument F1 | ≥ 0.70 | 0.696 | 0.762 | 0.711 | MISSED |
+| 4. Dataset balance | Each label 40–60% | 45% / 55% | 45% / 55% | 45% / 55% | MET |
+| 5. Unaided repeat-label agreement | ≥ 27/30 after ≥ 48 hours | Not tested | Not tested | Not tested | MISSED (unverified) |
 
-**Did it help, and how do I know:**
+| Measure | Seed 42 | Seed 7 | Seed 2024 |
+|---|---|---|---|
+| Accuracy change | +0.000 | +0.133 | +0.033 |
+| Macro F1 | 0.348 | 0.603 | 0.422 |
+| Proposal recall | 0.000 | 0.286 | 0.071 |
 
-<!-- If it didn't, say so. Relabelling that didn't help is a genuinely
-     interesting result and earns full credit. -->
+**Did it help?** It improved mean accuracy from **0.533 to 0.589** (+5.6
+percentage points) and recovered 4 proposals on seed 7 and 1 on seed 2024,
+but seed 42 did not improve and no previously missed criterion became MET.
+After accuracy spread is **0.133**, above the assignment's ten-point warning;
+the improvement is sensitive to split/initialization and is not a stable
+solution. Training took roughly 50 seconds per seed after versus 21 seconds
+before on CPU. Only this one intervention was tested.
 
+### Confusion matrices — After
 
+Seed 42:
+
+| true \ predicted | proposal | argument |
+|---|---|---|
+| **proposal** | 0 | 14 |
+| **argument** | 0 | 16 |
+
+Seed 7:
+
+| true \ predicted | proposal | argument |
+|---|---|---|
+| **proposal** | 4 | 10 |
+| **argument** | 0 | 16 |
+
+Seed 2024:
+
+| true \ predicted | proposal | argument |
+|---|---|---|
+| **proposal** | 1 | 13 |
+| **argument** | 0 | 16 |
+
+All after runs still make errors only from proposal to argument. The largest
+off-diagonal after count is 14 on seed 42; on seed 7 it falls to 10, with zero
+errors in the reverse direction. The saved zero-shot baseline is compared
+only with seed 42, its matching split; its 0.633 score cannot be compared
+fairly with seed 7's 0.667 on different posts.
 
 ---
 
 ## What's Still Broken
 
-<!-- For each criterion still missed: what you'd do, and why you stopped. -->
+- **Criterion 1 — accuracy:** audit reviewed training labels and validation
+  learning curves, then test a single further training intervention. I stopped
+  after the one planned change to preserve an interpretable before/after
+  comparison; the current model remains close to a majority guesser.
+- **Criterion 2 — proposal F1:** review the specific-change boundary and locate
+  decisive proposal clauses in training posts. Truncation is still possible
+  after the change. Personal label review and the staff agreement evidence
+  are needed before calling this a label inconsistency or choosing another fix.
+- **Criterion 3 — argument F1:** reduce proposals incorrectly called argument
+  rather than trying to raise argument recall, which is already 1.0. I stopped
+  because this experiment did not fix that bias across every seed, and further
+  model selection against these test sets would overfit the evaluation.
+- **Criterion 5 — consistency:** complete personal initial review, document
+  timing, and carry out the blind repeat-label check at least 48 hours later.
+  Automation cannot supply unaided student labels or an elapsed personal
+  labeling procedure. Staff agreement and adjudication are separately pending.
 
+**The gap between what I meant my labels to capture and what the model learned:**
+I intended the labels to distinguish an endorsed specific Minecraft change
+from a supported position without one. The original confusion matrix instead
+shows a model assigning every post to argument, and the longer-input runs
+recover only 0–4 of 14 proposals per seed while still assigning all 16 arguments
+correctly.
 
+### Submission status
 
-**The gap between what I meant my labels to capture and what the model
-learned:**
-<!-- Two sentences. Your confusion matrix is the evidence. -->
+- [x] Prediction recorded before AI inspected scores; AI authorship disclosed.
+- [x] Definitions baseline and bare-name ablation on the saved held-out posts.
+- [x] Three before and three after seeds, device, five-row run logs, and typed matrices.
+- [x] Strict verdicts, evidence-limited diagnoses, one intervention, and remaining issues.
+- [x] Results, prediction files, logs, and provenance retained in this repository.
+- [ ] Student's 30 staff labels, TF key, agreement rate, and every personal adjudication.
+- [ ] Personal label review and criterion 5's documented delayed consistency check.
+- [ ] Student review of AI-assisted interpretation and completion of the discussion exercises.
+- [ ] Push completed work and submit the same URL: https://github.com/Ziyu-Zhou/takemeter.
 
-
-
-<!-- ═════════════════════════════════════════════════════════════════════
-
-     SUBMISSION CHECKLIST — unit 5
-
-       [ ] criteria.md has five numbered criteria, each naming a NUMBER
-       [ ] Each has a reason underneath tied to your data or taxonomy
-       [ ] labels.csv: at least 150 rows, text/label/note, ONE file not split
-       [ ] No label above 70%
-       [ ] All five unit 5 sections have real content
-       [ ] Label Taxonomy includes the decision rule for your hardest boundary
-       [ ] The Dataset includes three hard cases
-       [ ] results.json and test_split.csv committed (the notebook does this)
-       [ ] At least four new commits
-       [ ] Repository URL submitted — WRITE IT DOWN
-
-     SUBMISSION CHECKLIST — unit 6
-
-       [ ] Baseline vs. Trained table, with your prediction written beforehand
-       [ ] Run Log — Before, five criteria across three seeds
-       [ ] Confusion matrix TYPED AS A MARKDOWN TABLE
-       [ ] A verdict on every criterion
-       [ ] A diagnosis for every miss, using the agreement report as evidence
-       [ ] Agreement Report with every disagreement adjudicated
-       [ ] One improvement, with Run Log — After
-       [ ] What's Still Broken
-       [ ] results_three_seeds_before.json, results_three_seeds_after.json,
-           baseline_results.json and
-           agreement_results.json committed
-       [ ] At least four new commits
-       [ ] The SAME repository URL as last unit
-
-     Do not delete and recreate this repository.
-     ═════════════════════════════════════════════════════════════════════ -->
-
----
+See [PERSONAL_REVIEW.md](PERSONAL_REVIEW.md) for the exact remaining steps.
+Numerical artifact checks are recorded in `evaluation/verification.json`.
 
 📖 **How to run this project: [RUNNING.md](RUNNING.md)**
