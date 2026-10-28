@@ -1,0 +1,22 @@
+{
+  "status": "passed",
+  "checks": [
+    "200 labeled posts; no exact duplicates; proposal=90, argument=110",
+    "before: all three splits, per-post predictions, metrics and confusion matrices verified",
+    "after: all three splits, per-post predictions, metrics and confusion matrices verified",
+    "Only MAX_LENGTH changed; data, split implementation, model, device and other settings match",
+    "Both baseline runs use all 30 original held-out posts; metrics recompute exactly",
+    "Original MPS and repeated CPU seed-42 accuracy, F1 and confusion counts agree",
+    "Personal templates preserve all required rows and contain no AI answer labels",
+    "New scripts compile; runner refuses to overwrite completed runs",
+    "Agreement helper rejects absent or blank personal labels before opening a key",
+    "Agreement helper validated with synthetic 30-post fixture and one disagreement; real staff key remains absent"
+  ],
+  "metric_tolerance": 1e-12,
+  "not_verified": [
+    "Personal labeling/review",
+    "Staff agreement and adjudication",
+    "48-hour unaided repeat-label criterion",
+    "Course submission"
+  ]
+}

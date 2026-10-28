@@ -121,6 +121,7 @@ def main():
     settings['completed_at_utc'] = datetime.now(timezone.utc).isoformat()
     settings['executed_cells'] = executed
     meta.write_text(json.dumps(settings, indent=2) + '\n')
+    (evaluation / f'partial_{args.label}.json').unlink(missing_ok=True)
 
 
 if __name__ == '__main__':
