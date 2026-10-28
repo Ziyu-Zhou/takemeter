@@ -1,0 +1,18 @@
+{
+  "model": "facebook/bart-large-mnli",
+  "revision": "d7645e127eaf1aefc7862fd59a17a5aa8558b8ce",
+  "device": "mps:0",
+  "torch_version": "2.14.1",
+  "transformers_version": "4.57.6",
+  "test_split_sha256": "de406c4cba1a6501bea10e82891bc6129c0b9a07115e55421c419d4ed2597195",
+  "definitions_sha256": "f1b5a614cc824fa380e21ba23ec4e125518b594f9d272c7452f9049db3f3b013",
+  "main_result": "baseline_results.json",
+  "ablation_result": "baseline_bare_names_results.json",
+  "definitions_prompt": {
+    "proposal": "The author endorses a specific change to Minecraft's current mechanics or behavior, identifying what should change and how.",
+    "argument": "The author supports a position about Minecraft with an explicit reason, example, or gameplay consequence, without endorsing a specific change to the game's current mechanics or behavior."
+  },
+  "hypothesis_template": "This post is {}.",
+  "bare_names_run": "--definitions evaluation/intentionally_missing_definitions.txt; this file intentionally does not exist",
+  "notes": "Both baseline runs used the same saved 30 seed-42 held-out posts and the same Apple GPU. Main reported baseline uses definitions, despite bare names scoring higher."
+}
