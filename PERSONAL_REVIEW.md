@@ -3,18 +3,21 @@
 The evaluation can run automatically. These steps require your labels or
 judgment. Blank templates are preparation, not completed evidence.
 
-1. Read `data/staff_taxonomy.md`. Label all 30 posts in
-   `staff_labeling_template.csv` yourself using `analysis`, `hot_take`, or
-   `reaction`. Keep the text unchanged. Save as `my_staff_labels.csv`.
-   Do this before opening any staff answer key.
-2. After saving your labels, obtain `data/staff_labels.csv` from your TF.
-   In this directory run `.venv/bin/python finish_agreement.py`.
-   It validates all 30 personal labels before reading the key, runs the
-   provided `agreement.py`, and creates `agreement_adjudication.md`.
-3. For every disagreement, make your own call using the written staff rules
-   and select pile (a), (b), or (c). Add the completed report to the README.
-   For the discussion exercise, choose one defensible disagreement; an AI can
-   make both cases, but the final call and reason need to be yours.
+1. **Partial labeling accepted for the current report:** your saved Numbers
+   file contains 19 labels. They were exported unchanged to
+   `my_staff_labels.csv`; agreement is **14/19 = 73.7%**. You asked to work
+   with these entries, so the remaining 11 are excluded and left unlabeled.
+   The full assignment still calls for 30 posts.
+2. The TF key is present and the partial comparison is saved. Reproduce it
+   with `.venv/bin/python finish_agreement.py --allow-partial`. Without that
+   explicit flag, the helper still requires all 30 labels. If you complete the
+   rest later, update the student CSV and rerun the full comparison. Keep the
+   remaining labels independent of the answer key.
+3. Your five final labels and short reasons are now recorded in
+   `agreement_adjudication.md` and the README. AI preserved your exact words,
+   added rule-specific explanations, and inferred pile (a) for each from your
+   reasons. Those pile letters were not explicit selections by you and remain
+   editable. The original 14/19 agreement score and original labels are intact.
 4. Review the existing 191 AI-prelabeled Minecraft posts in `labels.csv`.
    Their notes still truthfully say `pending human review`. The previous
    unit also required 20 unaided cold labels; only 9 are recorded. Existing
@@ -37,5 +40,5 @@ judgment. Blank templates are preparation, not completed evidence.
 
 No accuracy/F1 target has been lowered. Criterion 5 remains MISSED
 (unverified), rather than receiving a made-up agreement rate. The staff
-agreement report is also pending; no answer key or personal judgments were
-invented.
+agreement report is explicitly partial; no missing student labels or final
+personal judgments were invented.
