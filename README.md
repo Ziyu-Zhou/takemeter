@@ -370,6 +370,8 @@ and agreement checks have actually been performed.
 | F1 — `label_two` |  |  |  |
 
 **What I predicted before I looked:**
+
+AI-assisted prediction, recorded before inspecting the existing scores or running either baseline: the fine-tuned model will outperform the zero-shot baseline on `proposal` F1 because Minecraft-specific wording can distinguish an endorsed change from a defended or rejected suggestion. This prediction still needs my personal confirmation.
 <!-- Milestone 1 asks you to write this BEFORE seeing the trained numbers. A
      prediction made afterwards isn't one. -->
 
